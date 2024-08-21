@@ -8,6 +8,7 @@ This project is a simple Employee Management System built with Node.js and MySQL
 - View all employees
 - Update employee information
 - Delete an employee
+- Search employee by employee ID
 
 ## Technologies Used
 
