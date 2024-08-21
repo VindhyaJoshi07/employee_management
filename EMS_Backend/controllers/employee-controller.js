@@ -58,6 +58,26 @@ const getEmployees = async (req,res,next) => {
       }
 };
 
+const getEmployeesByID = async (req, res, next) => {
+  const empId = req.params.eid;
+  try {
+    const data = await connection.promise().query(
+      `SELECT e.empID, e.empFirstName, e.empMiddleName, e.empLastName, e.empEmail, e.empDOB, e.empJobTitle,
+          d.deptName,
+          a.addressLine1, a.addressLine2, a.city, a.state, a.zip, a.emContact, a.emPhone, a.homePhone
+            FROM employee e
+            JOIN department d ON e.deptID = d.deptID
+            JOIN employee_address a ON e.empID = a.empID
+            WHERE e.empID = empId;`
+    );
+  } catch (err) {
+    res.status(500).json({
+      message: err.message || "An error occurred while fetching the employee details",
+    });
+  } 
+
+};
+
 //  creating employee API
 const createEmployee = async (req, res, next) => {
     try{
