@@ -123,7 +123,29 @@ const createEmployee = async (req, res, next) => {
                                 throw err;
                             });
                         }
-                        res.send('Employee created');
+                        res.status(201).json({
+                          message: 'Employee created successfully',
+                          employee: {
+                            empID,
+                            empFirstName,
+                            empMiddleName,
+                            empLastName,
+                            empEmail,
+                            empDOB,
+                            empJobTitle,
+                            deptName,
+                            address: {
+                              addressLine1,
+                              addressLine2,
+                              city,
+                              state,
+                              zip,
+                              emContact,
+                              emPhone,
+                              homePhone,
+                            },
+                          },
+                        });
                     });
                 });
             });
@@ -194,7 +216,7 @@ const createEmployee = async (req, res, next) => {
                       });
                     }
                     res.status(200).json({
-                      message: 'Employee updated successfully',
+                      message: 'Employee updated successfully', // make sure to display the data
                     });
                   });
                 });
@@ -240,29 +262,15 @@ const deleteEmployee = async (req, res, next) => {
             return res.status(404).json({ message: "Employee not found" });
           }
 
-          // Optionally delete department if no employees are associated
-          const deleteDepartmentQuery = `
-            DELETE d FROM department d
-            LEFT JOIN employee e ON d.deptID = e.deptID
-            WHERE d.deptID NOT IN (SELECT deptID FROM employee)
-          `;
-          connection.query(deleteDepartmentQuery, (err, result) => {
+          // Commit the transaction
+          connection.commit((err) => {
             if (err) {
               return connection.rollback(() => {
                 throw err;
               });
             }
 
-            // Commit the transaction
-            connection.commit((err) => {
-              if (err) {
-                return connection.rollback(() => {
-                  throw err;
-                });
-              }
-
-              res.status(200).json({ message: "Employee deleted successfully" });
-            });
+            res.status(200).json({ message: "Employee deleted successfully" });
           });
         });
       });
@@ -273,6 +281,7 @@ const deleteEmployee = async (req, res, next) => {
     });
   }
 };
+
 
 exports.getEmployees = getEmployees;
 exports.getEmployeesByID = getEmployeesByID;
