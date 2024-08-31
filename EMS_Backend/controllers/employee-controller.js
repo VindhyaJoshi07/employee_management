@@ -15,28 +15,7 @@ connection.connect(err => {
   });
 
 
-// different middleware functions.
-
-let DUMMY_EMPLOYEES = [
-    {
-        id: 'e1',
-        firstname: "John",
-        lastname: "Doe",
-        email: "john@example.com",
-        department: "Software Engineer",
-        address: "dehfvidfjvdfmv"
-    },
-    {
-        id: 'e2',
-        firstname: "Jane",
-        lastname: "Smith",
-        email: "jane@example.com",
-        department: "Product Manager",
-        address: "dehvvomdescodme"
-    }
-];
-
-// fetching all the employees
+// *************************************  getEmployees API *********************************************
 
 const getEmployees = async (req,res,next) => {
     try {
@@ -58,7 +37,38 @@ const getEmployees = async (req,res,next) => {
       }
 };
 
-//  creating employee API
+// *************************************  getEmployeeByID API *********************************************
+
+const getEmployeesByID = async (req, res, next) => {
+  const empId = req.params.eid;
+  try {
+    const data = await connection.promise().query(
+      `SELECT e.empID, e.empFirstName, e.empMiddleName, e.empLastName, e.empEmail, e.empDOB, e.empJobTitle,
+          d.deptName,
+          a.addressLine1, a.addressLine2, a.city, a.state, a.zip, a.emContact, a.emPhone, a.homePhone
+            FROM employee e
+            JOIN department d ON e.deptID = d.deptID
+            JOIN employee_address a ON e.empID = a.empID
+            WHERE e.empID = ?;`, [empId]
+    );
+
+    if (data.length === 0) {
+      return res.status(404).json({ message: "Employee not found" });
+    }
+
+    res.status(200).json({
+      employee: data[0],
+    });
+
+  } catch (err) {
+    res.status(500).json({
+      message: err.message || "An error occurred while fetching the employee details",
+    });
+  } 
+
+};
+
+//  *************************************  create API *********************************************
 const createEmployee = async (req, res, next) => {
     try{
         const { deptName, empFirstName, empMiddleName, empLastName, empEmail, empDOB, empJobTitle,
@@ -113,7 +123,29 @@ const createEmployee = async (req, res, next) => {
                                 throw err;
                             });
                         }
-                        res.send('Employee created');
+                        res.status(201).json({
+                          message: 'Employee created successfully',
+                          employee: {
+                            empID,
+                            empFirstName,
+                            empMiddleName,
+                            empLastName,
+                            empEmail,
+                            empDOB,
+                            empJobTitle,
+                            deptName,
+                            address: {
+                              addressLine1,
+                              addressLine2,
+                              city,
+                              state,
+                              zip,
+                              emContact,
+                              emPhone,
+                              homePhone,
+                            },
+                          },
+                        });
                     });
                 });
             });
@@ -131,9 +163,10 @@ const createEmployee = async (req, res, next) => {
     };
 
 
+    // *************************************  update API *********************************************
 
     const updateEmployee = async (req, res, next) => {
-        const { empID } = req.params;
+        const empID  = req.params.eid;
         const { deptName, empFirstName, empMiddleName, empLastName, empEmail, empDOB, empJobTitle,
                 addressLine1, addressLine2, city, state, zip, emContact, emPhone, homePhone } = req.body;
       
@@ -183,7 +216,7 @@ const createEmployee = async (req, res, next) => {
                       });
                     }
                     res.status(200).json({
-                      message: 'Employee updated successfully',
+                      message: 'Employee updated successfully', // make sure to display the data
                     });
                   });
                 });
@@ -197,19 +230,61 @@ const createEmployee = async (req, res, next) => {
         }
       };
 
-const deleteEmployee = (req, res, next) => {
-    const empId = req.params.eid;
 
-    if(!DUMMY_EMPLOYEES.find(e => e.id === empId)) {
-        res.status(404).json({ message: 'Could not find an employee with the provided id'});
-    }
+// *************************************  delete API *********************************************
+const deleteEmployee = async (req, res, next) => {
+  const empID = req.params.eid;
 
+  try {
+    connection.beginTransaction(async (err) => {
+      if (err) throw err;
 
-    DUMMY_EMPLOYEES = DUMMY_EMPLOYEES.filter(e => e.id !== empId);
-    res.status(200).json({message: 'Employee deleted...'});
+      // Delete from employee_address table first since it references empID
+      const deleteAddressQuery = `DELETE FROM employee_address WHERE empID = ?`;
+      connection.query(deleteAddressQuery, [empID], (err, result) => {
+        if (err) {
+          return connection.rollback(() => {
+            throw err;
+          });
+        }
+
+        // Delete from employee table
+        const deleteEmployeeQuery = `DELETE FROM employee WHERE empID = ?`;
+        connection.query(deleteEmployeeQuery, [empID], (err, result) => {
+          if (err) {
+            return connection.rollback(() => {
+              throw err;
+            });
+          }
+
+          // If no rows were deleted, the employee does not exist
+          if (result.affectedRows === 0) {
+            return res.status(404).json({ message: "Employee not found" });
+          }
+
+          // Commit the transaction
+          connection.commit((err) => {
+            if (err) {
+              return connection.rollback(() => {
+                throw err;
+              });
+            }
+
+            res.status(200).json({ message: "Employee deleted successfully" });
+          });
+        });
+      });
+    });
+  } catch (err) {
+    res.status(500).json({
+      message: err.message || "An error occurred while deleting the employee",
+    });
+  }
 };
 
+
 exports.getEmployees = getEmployees;
+exports.getEmployeesByID = getEmployeesByID;
 exports.createEmployee = createEmployee;
 exports.updateEmployee = updateEmployee;
 exports.deleteEmployee = deleteEmployee;

@@ -9,9 +9,11 @@ const router = express.Router();
 
 router.get('/', employeeController.getEmployees);
 
+router.get('/:eid', employeeController.getEmployeesByID);
+
 router.post('/', employeeController.createEmployee);
 
-router.patch('/:empID', employeeController.updateEmployee);
+router.patch('/:eid', employeeController.updateEmployee);
 
 router.delete('/:eid', employeeController.deleteEmployee);
 
