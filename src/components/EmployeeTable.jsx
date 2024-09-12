@@ -1,5 +1,5 @@
-import React, { useEffect } from 'react';
-import './EmployeeTable.css'; // Optional: create this CSS file for custom styles
+import React, { useState, useEffect } from 'react';
+import './EmployeeTable.css'; // Add custom styles here
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchEmployees, deleteEmployee } from '../redux/employeeSlice';
 import { useNavigate } from 'react-router-dom';
@@ -7,33 +7,42 @@ import { useNavigate } from 'react-router-dom';
 function EmployeeTable() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  
-  // Fetching employees from Redux store
+  const [showModal, setShowModal] = useState(false);
+  const [employeeToDelete, setEmployeeToDelete] = useState(null);
+
   const employees = useSelector((state) => state.employees.employees);
   const employeeStatus = useSelector((state) => state.employees.status);
   const error = useSelector((state) => state.employees.error);
 
-  
-  // Fetch employees if status is idle
   useEffect(() => {
     if (employeeStatus === 'idle') {
       dispatch(fetchEmployees());
     }
   }, [employeeStatus, dispatch]);
 
-  // Handle delete action
+  // Show modal and store the employee ID to delete
   const handleDelete = (id) => {
-    dispatch(deleteEmployee(id));
+    setEmployeeToDelete(id);
+    setShowModal(true);
   };
 
-  // Handle edit action
+  // Confirm delete action
+  const confirmDelete = () => {
+    dispatch(deleteEmployee(employeeToDelete));
+    setShowModal(false);
+  };
+
+  // Cancel delete action
+  const cancelDelete = () => {
+    setShowModal(false);
+    setEmployeeToDelete(null);
+  };
+
   const handleEdit = (id) => {
     navigate(`/edit-employee/${id}`);
   };
 
-  // Determine content based on the status of fetching employees
   let content;
-
   if (employeeStatus === 'loading') {
     content = <p>Loading...</p>;
   } else if (employeeStatus === 'succeeded') {
@@ -71,10 +80,20 @@ function EmployeeTable() {
   }
 
   return (
-          <div className="employee-table">
-            <h2>Employee Dashboard</h2>
-            {content}
+    <div className="employee-table">
+      <h2>Employee Dashboard</h2>
+      {content}
+
+      {showModal && (
+        <div className="modal-overlay">
+          <div className="modal">
+            <p>Are you sure you want to delete this employee?</p>
+            <button onClick={confirmDelete}>Yes</button>
+            <button onClick={cancelDelete}>No</button>
           </div>
+        </div>
+      )}
+    </div>
   );
 }
 

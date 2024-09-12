@@ -14,7 +14,7 @@ function HomePage() {
         </p>
       </div>
       <div className="image-container">
-        <img src="your-image-path.jpg" alt="Case study" />
+        <img className="image-style" src="https://www.workhub.ai/wp-content/uploads/2021/06/what-is-an-employee-management-system.jpg"  alt="Case study" />
         <div className="image-caption">A Case study of Foundation Polytechnic, Ikot Ekpene</div>
       </div>
     </div>

@@ -3,9 +3,17 @@ import axios from 'axios';
 
 // Async thunk to fetch employees
 export const fetchEmployees = createAsyncThunk('employees/fetchEmployees', async () => {
+  console.log("inside fetchEmployees..");
   const response = await axios.get('http://localhost:5000/api/employees');
+  console.log("response fetch.."+JSON.stringify(response.data.employee))
   return response.data.employee;
 });
+
+export const getEmployeeByID = createAsyncThunk('employees/getEmpById', async (id) => {
+  const response = await axios.get(`http://localhost:5000/api/employees/${id}`);
+  console.log("inside getEmployeesByID.."+JSON.stringify(response.data.employee));
+  return response.data.employee;
+})
 
 // Async thunk to add an employee
 export const addEmployee = createAsyncThunk('employees/addEmployee', async (newEmployee) => {
@@ -13,17 +21,24 @@ export const addEmployee = createAsyncThunk('employees/addEmployee', async (newE
   return response.data.employee;
 });
 
+
 // Async thunk to update an employee
-export const updateEmployee = createAsyncThunk('employees/updateEmployee', async ({ id, updatedEmployee }) => {
-  const response = await axios.patch(`http://localhost:5000/api/employees/${id}`, updatedEmployee);
+export const updateEmployee = createAsyncThunk('employees/updateEmployee', async ({ id, formData },  { dispatch }) => {
+  console.log("Updated Employee: " + JSON.stringify(formData));
+  const response =  await axios.patch(`http://localhost:5000/api/employees/${id}`, formData);
+  dispatch(getEmployeeByID(id)); 
   return response.data.employee;
 });
+
 
 // Async thunk to delete an employee
 export const deleteEmployee = createAsyncThunk('employees/deleteEmployee', async (id) => {
   await axios.delete(`http://localhost:5000/api/employees/${id}`);
   return id;
 });
+
+console.log("fetchEmployees.fulfilled.."+fetchEmployees.fulfilled);
+console.log("fetchEmployees.pending"+fetchEmployees.pending);
 
 // Slice
 const employeeSlice = createSlice({
@@ -40,6 +55,7 @@ const employeeSlice = createSlice({
         state.status = 'loading';
       })
       .addCase(fetchEmployees.fulfilled, (state, action) => {
+        console.log("Action.."+JSON.stringify(action))
         state.status = 'succeeded';
         state.employees = action.payload;
       })
@@ -51,13 +67,16 @@ const employeeSlice = createSlice({
         state.employees.push(action.payload);
       })
       .addCase(updateEmployee.fulfilled, (state, action) => {
-        if (action.payload) {
-          const index = state.employees.findIndex(employee => employee.empID === action.payload.empID);
-          if (index !== -1) {
-            state.employees[index] = action.payload;
-          }
+        console.log('Action Payload:', action.payload);
+        if (!action.payload || !action.payload.empID) {
+          console.error('Invalid payload:', action.payload);
+          return; // Early return to avoid further errors
+        }
+        const index = state.employees.findIndex(employee => employee.empID === action.payload.empID);
+        if (index !== -1) {
+          state.employees[index] = action.payload;
         } else {
-          console.error('Update failed: payload is undefined');
+          console.warn('Employee not found for update:', action.payload.empID);
         }
       })
       .addCase(deleteEmployee.fulfilled, (state, action) => {

@@ -1,6 +1,6 @@
 .employee-form {
     margin: 2rem auto;
-    max-width: 500px;
+    max-width: 1000px;
     padding: 1.5rem;
     border: 1px solid #ccc;
     border-radius: 8px;
@@ -37,3 +37,130 @@
     background-color: #0074cc;
   }
   
+
+  .employee-form {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+  }
+  
+  .employee-info, .employee-address {
+    margin-bottom: 20px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background-color: #fff;
+  }
+  
+  .employee-info h3, .employee-address h3 {
+    margin-bottom: 10px;
+  }
+  
+  label {
+    display: block;
+    margin-bottom: 8px;
+  }
+  
+  input {
+    width: 100%;
+    padding: 8px;
+    margin-top: 4px;
+    margin-bottom: 12px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  
+  .form-buttons {
+    display: flex;
+    justify-content: space-between;
+  }
+  
+
+
+  /* EmployeeForm.css */
+
+.employee-form {
+  max-width: 800px;
+  margin: 20px auto;
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+}
+
+.employee-info, .employee-address {
+  margin-bottom: 20px;
+}
+
+label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: bold;
+}
+
+input {
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.form-buttons {
+  display: flex;
+  justify-content: space-between;
+}
+
+@media (max-width: 768px) {
+  .employee-form {
+    padding: 10px;
+  }
+
+  .form-buttons {
+    flex-direction: column;
+  }
+
+  .form-buttons button {
+    margin-bottom: 10px;
+    width: 100%;
+  }
+}
+
+.employee-form {
+  width: 90%;
+  margin: 0 auto;
+}
+
+.form-section {
+  display: flex;
+  justify-content: space-between;
+}
+
+.employee-info, .employee-address {
+  width: 48%;
+}
+
+.employee-info label, .employee-address label {
+  display: block;
+  margin-bottom: 10px;
+}
+
+.employee-info input, .employee-address input {
+  width: 100%;
+  padding: 8px;
+  margin-top: 5px;
+  box-sizing: border-box;
+}
+
+.form-buttons {
+  margin-top: 20px;
+}
+
+.form-buttons button {
+  margin-right: 10px;
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+}

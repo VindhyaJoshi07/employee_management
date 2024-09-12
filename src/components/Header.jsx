@@ -6,14 +6,13 @@ function Header() {
   return (
     <header className="header">
       <div className="logo">
-        <img src="path/to/logo.png" alt="Company Logo" /> {/* Replace with your logo path */}
+        <img className= "logo-style" src="https://acore.ca/wp-content/uploads/2020/12/Employee-Management-Systems-Development.png" alt="Company Logo" />
       </div>
       <nav>
         <ul>
           <li><Link to="/">Home</Link></li>
           <li><Link to="/employees">Employee Dashboard</Link></li>
           <li><Link to="/add-employee">Employee Registration</Link></li>
-          <li><Link to="/admin">Admin Dashboard</Link></li>
         </ul>
       </nav>
     </header>
