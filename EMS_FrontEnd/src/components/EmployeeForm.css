@@ -1,0 +1,39 @@
+.employee-form {
+    margin: 2rem auto;
+    max-width: 500px;
+    padding: 1.5rem;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+  }
+  
+  .employee-form h2 {
+    text-align: center;
+    margin-bottom: 1.5rem;
+  }
+  
+  .employee-form label {
+    display: block;
+    margin-bottom: 1rem;
+  }
+  
+  .employee-form label input {
+    width: 100%;
+    padding: 0.75rem;
+    margin-top: 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  
+  .employee-form button {
+    padding: 0.75rem 1.5rem;
+    margin-right: 1rem;
+    border: none;
+    background-color: #004a7c;
+    color: white;
+    cursor: pointer;
+  }
+  
+  .employee-form button:hover {
+    background-color: #0074cc;
+  }
+  

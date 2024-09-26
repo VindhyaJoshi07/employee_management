@@ -1,0 +1,38 @@
+.employee-table {
+    margin: 2rem;
+  }
+  
+  .employee-table h2 {
+    text-align: center;
+    margin-bottom: 1.5rem;
+  }
+  
+  .employee-table table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+  }
+  
+  .employee-table th, .employee-table td {
+    padding: 1rem;
+    border-bottom: 1px solid #ccc;
+  }
+  
+  .employee-table th {
+    background-color: #004a7c;
+    color: white;
+  }
+  
+  .employee-table td button {
+    margin-right: 0.5rem;
+    padding: 0.5rem 1rem;
+    border: none;
+    background-color: #004a7c;
+    color: white;
+    cursor: pointer;
+  }
+  
+  .employee-table td button:hover {
+    background-color: #0074cc;
+  }
+  

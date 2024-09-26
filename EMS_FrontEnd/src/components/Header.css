@@ -1,0 +1,30 @@
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2rem;
+  background-color: #004a7c; /* Adjust based on your color scheme */
+  color: white;
+}
+
+.header .logo img {
+  height: 50px;
+}
+
+.header nav ul {
+  list-style-type: none;
+  display: flex;
+  gap: 1.5rem;
+}
+
+.header nav ul li a {
+  color: white;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.header nav ul li a:hover {
+  text-decoration: underline;
+}
+
+  

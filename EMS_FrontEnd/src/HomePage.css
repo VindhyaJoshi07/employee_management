@@ -1,0 +1,40 @@
+.homepage {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 40px;
+    background: linear-gradient(to right, #005678, #00b4db); /* Background gradient */
+    color: white;
+  }
+  
+  .intro {
+    flex: 1;
+    padding-right: 40px;
+  }
+  
+  .intro h1 {
+    font-size: 2.5rem;
+    margin-bottom: 20px;
+  }
+  
+  .intro p {
+    font-size: 1.2rem;
+    line-height: 1.6;
+  }
+  
+  .image-container {
+    flex: 1;
+    text-align: center;
+  }
+  
+  .image-container img {
+    max-width: 100%;
+    border-radius: 10px;
+  }
+  
+  .image-caption {
+    margin-top: 10px;
+    font-style: italic;
+    color: #ffdd57; /* Accent color */
+  }
+  
