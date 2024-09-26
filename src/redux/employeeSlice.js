@@ -37,8 +37,15 @@ export const deleteEmployee = createAsyncThunk('employees/deleteEmployee', async
   return id;
 });
 
-console.log("fetchEmployees.fulfilled.."+fetchEmployees.fulfilled);
-console.log("fetchEmployees.pending"+fetchEmployees.pending);
+// ********************* Login Thunks **********************
+
+// Async thunk to handle login
+export const loginUser = createAsyncThunk('auth/loginUser', async ({ user_name, password }) => {
+  console.log("inside login thunk...");
+  const response = await axios.post('http://localhost:5000/api/employees/login', { user_name, password });
+  console.log("response.data..." +JSON.stringify(response.data));
+  return response.data; 
+});
 
 // Slice
 const employeeSlice = createSlice({
@@ -50,12 +57,12 @@ const employeeSlice = createSlice({
   },
   reducers: {},
   extraReducers: (builder) => {
+    // ********************* Employee actions **********************
     builder
       .addCase(fetchEmployees.pending, (state) => {
         state.status = 'loading';
       })
       .addCase(fetchEmployees.fulfilled, (state, action) => {
-        console.log("Action.."+JSON.stringify(action))
         state.status = 'succeeded';
         state.employees = action.payload;
       })
@@ -67,16 +74,12 @@ const employeeSlice = createSlice({
         state.employees.push(action.payload);
       })
       .addCase(updateEmployee.fulfilled, (state, action) => {
-        console.log('Action Payload:', action.payload);
         if (!action.payload || !action.payload.empID) {
-          console.error('Invalid payload:', action.payload);
-          return; // Early return to avoid further errors
+          return;
         }
         const index = state.employees.findIndex(employee => employee.empID === action.payload.empID);
         if (index !== -1) {
           state.employees[index] = action.payload;
-        } else {
-          console.warn('Employee not found for update:', action.payload.empID);
         }
       })
       .addCase(deleteEmployee.fulfilled, (state, action) => {
@@ -85,4 +88,39 @@ const employeeSlice = createSlice({
   },
 });
 
+
 export default employeeSlice.reducer;
+
+// ********************* Login Slice **********************
+
+const loginSlice = createSlice({
+  name: 'auth',
+  initialState: {
+    user: null,
+    status: 'idle',
+    error: null,
+  },
+  reducers: {
+    logout(state) {
+      state.user = null;
+      state.status = 'idle';
+    },
+  },
+  extraReducers: (builder) => {
+    builder
+      .addCase(loginUser.pending, (state) => {
+        state.status = 'loading';
+      })
+      .addCase(loginUser.fulfilled, (state, action) => {
+        state.status = 'succeeded';
+        state.user = action.payload.user;   
+      })
+      .addCase(loginUser.rejected, (state, action) => {
+        state.status = 'failed';
+        state.error = action.error.message;
+      });
+  },
+});
+
+export const { logout } = loginSlice.actions;
+export const { reducer: loginReducer } = loginSlice;

@@ -13,6 +13,8 @@ function Header() {
           <li><Link to="/">Home</Link></li>
           <li><Link to="/employees">Employee Dashboard</Link></li>
           <li><Link to="/add-employee">Employee Registration</Link></li>
+          <li><Link to="/accessLogs/vindhya">Access Logs</Link></li>
+          <li><Link to="/login">Login</Link></li>
         </ul>
       </nav>
     </header>
