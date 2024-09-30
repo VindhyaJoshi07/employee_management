@@ -17,4 +17,11 @@ router.patch('/:eid', employeeController.updateEmployee);
 
 router.delete('/:eid', employeeController.deleteEmployee);
 
+router.get('/getLogsByUsername/:userName', employeeController.getLogByUserName);
+
+router.post('/actions', employeeController.createLoggingActions);
+
+router.post('/login', employeeController.userLogin);
+
+
 module.exports = router;

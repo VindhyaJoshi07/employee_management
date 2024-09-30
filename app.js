@@ -1,16 +1,22 @@
 // importing express
 const express = require('express');
+const cors = require('cors');
 // to parse the body of the incoming requests
 const bodyParser = require('body-parser');
+
 
 const employeesRoutes = require('./EMS_Backend/routes/employees-routes');
 
 ////initializes a new Express app that can be used to define and configure web routes, middleware, and other application logic.
 const app = express();
 
+
+app.use(cors());
+
 app.use(bodyParser.json());
 
-// Connecting to the database
+
+
 
 //middlewares
 app.use('/api/employees',employeesRoutes);
