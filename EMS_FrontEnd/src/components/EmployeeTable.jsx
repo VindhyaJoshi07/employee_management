@@ -1,22 +1,36 @@
-import React, { useState, useEffect } from 'react';
-import './EmployeeTable.css'; // Optional: create this CSS file for custom styles
+import React, { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchEmployees, deleteEmployee } from '../redux/employeeSlice';
+import { useNavigate } from 'react-router-dom';
+import './EmployeeTable.css';
 
 function EmployeeTable() {
-  // Example state for employees; later you will fetch this from the backend
-  const [employees, setEmployees] = useState([
-    { id: 1, firstName: 'John', lastName: 'Doe', email: 'john.doe@example.com', department: 'HR' },
-    { id: 2, firstName: 'Jane', lastName: 'Smith', email: 'jane.smith@example.com', department: 'Finance' },
-    { id: 3, firstName: 'Sam', lastName: 'Wilson', email: 'sam.wilson@example.com', department: 'IT' }
-  ]);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const employees = useSelector((state) => state.employees.employees);
+  const employeeStatus = useSelector((state) => state.employees.status);
+  const error = useSelector((state) => state.employees.error);
 
-  // Function to handle deletion (placeholder for now)
+  useEffect(() => {
+    if (employeeStatus === 'idle') {
+      dispatch(fetchEmployees());
+    }
+  }, [employeeStatus, dispatch]);
+
   const handleDelete = (id) => {
-    setEmployees(employees.filter(employee => employee.id !== id));
+    dispatch(deleteEmployee(id));
   };
 
-  return (
-    <div className="employee-table">
-      <h2>Employee Dashboard</h2>
+  const handleEdit = (id) => {
+    navigate(`/edit-employee/${id}`);
+  };
+
+  let content;
+
+  if (employeeStatus === 'loading') {
+    content = <p>Loading...</p>;
+  } else if (employeeStatus === 'succeeded') {
+    content = (
       <table>
         <thead>
           <tr>
@@ -30,20 +44,29 @@ function EmployeeTable() {
         </thead>
         <tbody>
           {employees.map(employee => (
-            <tr key={employee.id}>
-              <td>{employee.id}</td>
-              <td>{employee.firstName}</td>
-              <td>{employee.lastName}</td>
-              <td>{employee.email}</td>
-              <td>{employee.department}</td>
+            <tr key={employee.empID}>
+              <td>{employee.empID}</td>
+              <td>{employee.empFirstName}</td>
+              <td>{employee.empLastName}</td>
+              <td>{employee.empEmail}</td>
+              <td>{employee.deptName}</td>
               <td>
-                <button>Edit</button>
-                <button onClick={() => handleDelete(employee.id)}>Delete</button>
+                <button onClick={() => handleEdit(employee.empID)}>Edit</button>
+                <button onClick={() => handleDelete(employee.empID)}>Delete</button>
               </td>
             </tr>
           ))}
         </tbody>
       </table>
+    );
+  } else if (employeeStatus === 'failed') {
+    content = <p>{error}</p>;
+  }
+
+  return (
+    <div className="employee-table">
+      <h2>Employee Dashboard</h2>
+      {content}
     </div>
   );
 }

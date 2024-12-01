@@ -1,17 +1,31 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import './EmployeeForm.css'; // Optional: create this CSS file for custom styles
+import { useDispatch, useSelector } from 'react-redux';
+import { addEmployee, updateEmployee } from '../redux/employeeSlice';
+import './EmployeeForm.css';
 
 function EmployeeForm() {
   const { id } = useParams(); // Capture the employee ID if editing
-  const navigate = useNavigate(); // Use this to navigate after form submission
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const existingEmployee = useSelector(state =>
+    state.employees.employees.find(emp => emp.empID === parseInt(id))
+  );
 
   const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
-    email: '',
-    department: ''
+    empFirstName: '',
+    empMiddleName: '',
+    empLastName: '',
+    empEmail: '',
+    deptName: '',
+    // Add other fields as necessary
   });
+
+  useEffect(() => {
+    if (existingEmployee) {
+      setFormData(existingEmployee);
+    }
+  }, [existingEmployee]);
 
   const handleChange = (e) => {
     setFormData({
@@ -22,9 +36,13 @@ function EmployeeForm() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Logic to add or update employee will go here
-    console.log('Form submitted:', formData);
-    // Redirect back to the employee dashboard after submission
+    if (id) {
+      // Edit existing employee
+      dispatch(updateEmployee({ id, updatedEmployee: formData }));
+    } else {
+      // Add new employee
+      dispatch(addEmployee(formData));
+    }
     navigate('/employees');
   };
 
@@ -34,19 +52,19 @@ function EmployeeForm() {
       <form onSubmit={handleSubmit}>
         <label>
           First Name:
-          <input type="text" name="firstName" value={formData.firstName} onChange={handleChange} required />
+          <input type="text" name="empFirstName" value={formData.empFirstName} onChange={handleChange} required />
         </label>
         <label>
           Last Name:
-          <input type="text" name="lastName" value={formData.lastName} onChange={handleChange} required />
+          <input type="text" name="empLastName" value={formData.empLastName} onChange={handleChange} required />
         </label>
         <label>
           Email:
-          <input type="email" name="email" value={formData.email} onChange={handleChange} required />
+          <input type="email" name="empEmail" value={formData.empEmail} onChange={handleChange} required />
         </label>
         <label>
           Department:
-          <input type="text" name="department" value={formData.department} onChange={handleChange} required />
+          <input type="text" name="deptName" value={formData.deptName} onChange={handleChange} required />
         </label>
         <button type="submit">Save</button>
         <button type="button" onClick={() => navigate('/employees')}>Cancel</button>
